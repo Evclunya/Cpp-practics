@@ -102,6 +102,7 @@ void printDate(unsigned short day, unsigned short month, unsigned short year, in
 	cout.width(delta); cout << " ";
 }
 
+
 void Draw(struct Record* records) {
 	cout << endl;	cout.width(79); cout.fill('-'); cout << "-" << endl;
 	cout.fill(' '); cout.width(78);  cout << left << "|Отдел кадров"; cout << "|" << endl;
