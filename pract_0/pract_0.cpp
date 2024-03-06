@@ -1,7 +1,8 @@
-﻿﻿// var_0.cpp : 
+﻿
 #include <iostream>
 #include <windows.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -21,52 +22,6 @@ struct Record
 	//bool isEmpty;
 };
 
-
-void DrawLine() {
-	for (int i = 0; i < 80; i++) {
-		cout << "-";
-	}
-	cout << "\n";
-}
-
-char* GetSpacebar(int count) {
-	char* msg = new char[count];
-	for (int i = 0; i < count; i++)
-	{
-		msg[i] = ' ';
-	}
-	msg[count] = '\0';
-	return msg;
-}
-
-int GetSize(char* msg) {
-	int size = 0;
-	while (msg[size] != '\0')
-		size++;
-	return size;
-}
-
-void DrawWrong(struct Record* records) {
-	DrawLine();
-	cout << "| Отдел кадров" << GetSpacebar(80 - sizeof("| Отдел кадров")) << "|\n";
-	DrawLine();
-	//|Фамилия |Инициалы |Год рожд | Оклад|
-	cout << "| Фамилия" << GetSpacebar(21 - sizeof("| Фамилия"));
-	cout << "| Инициалы" << GetSpacebar(21 - sizeof("| Инициалы"));
-	cout << "| Год рожд" << GetSpacebar(21 - sizeof("| Год рожд"));
-	cout << "| Оклад" << GetSpacebar(20 - sizeof("| Оклад")) << "|\n";
-	DrawLine();
-	for (int i = 0; i < 3; i++) {
-		cout << "| " << records[i].surName << GetSpacebar(18 - GetSize(records[i].surName));
-		cout << "| " << records[i].ident << GetSpacebar(18 - GetSize(records[i].ident));
-		cout << "| " << records[i].year << GetSpacebar(18 - to_string(records[i].year).size());
-		cout << "| " << records[i].salary << GetSpacebar(22 - to_string(records[i].salary).size()) << "|\n";
-		//cout << "| " << records[i].salary << GetSpacebar(22 - to_string(records[i].salary).size()) << "|\n";
-		DrawLine();
-	}
-	cout << "| Примечание: оклад установлен по состоянию на 1 января 2000 года" << GetSpacebar(80 - sizeof("| Примечание: оклад установлен по состоянию на 1 января 2000 года")) << "|\n";
-	DrawLine();
-}
 
 void myCentr(string s, int wLine) {
 
@@ -135,6 +90,39 @@ void Draw(struct Record* records) {
 	cout.width(79); cout.fill('-'); cout << "-" << endl;
 }
 
+vector<int> getMinMonthDate(struct Record* records) {
+	vector<int> indexes;
+	int minMonth = 13;
+	for (int i = 0; i < 10; i++) {
+		if (records[i].date.month < minMonth) {
+			minMonth = records[i].date.month;
+		}
+	}
+	for (int i = 0; i < 10; i++) {
+		if (minMonth == records[i].date.month) {
+			indexes.push_back(i);
+		}
+	}
+	return indexes;
+}
+
+vector<int> getMaxMonthDate(struct Record* records) {
+	vector<int> indexes;
+	int maxMonth = 0;
+	for (int i = 0; i < 10; i++) {
+		if ((maxMonth < records[i].date.month) and (records[i].date.month < 13)) {
+			maxMonth = records[i].date.month;
+		}
+	}
+	for (int i = 0; i < 10; i++) {
+		if (maxMonth == records[i].date.month) {
+			indexes.push_back(i);
+		}
+	}
+	return indexes;
+}
+
+
 int main()
 {
 	SetConsoleCP(1251);
@@ -150,7 +138,23 @@ int main()
 
 
 
+	cout << endl << "Вариант 30" << endl;
+	cout << "Поменять местами записи(элементы массива структур)," << endl;
+	cout << "содержащие минимальный и максимальный номер месяца даты" << endl;
 
-	//cout << endl;
-	//DrawWrong(records);
+	vector<int> minIndexes = getMinMonthDate(records);
+	vector<int> maxIndexes = getMaxMonthDate(records);
+	for (auto i : minIndexes)
+		cout << endl << "minIndexes = " << i << ' ';
+	for (auto i : maxIndexes)
+		cout << endl << "maxIndexes = " << i << ' ';
+
+	struct Record tmpRecord = records[maxIndexes[0]];
+	for (auto i : maxIndexes)
+		records[i] = records[minIndexes[0]];
+	for (auto i : minIndexes)
+		records[i] = tmpRecord;
+
+
+	Draw(records);
 }
